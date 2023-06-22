@@ -48,7 +48,7 @@ public class Startup {
                                     connectionString = Configuration.GetConnectionString("ConnectionString");
                                 }
                                 ArgumentNullException.ThrowIfNull(connectionString);
-                                businessObjectDbContextOptions.UseSqlServer(connectionString);
+                                businessObjectDbContextOptions.UseMySQL(connectionString);
                                 businessObjectDbContextOptions.UseChangeTrackingProxies();
                                 businessObjectDbContextOptions.UseObjectSpaceLinkProxies();
                                 businessObjectDbContextOptions.UseLazyLoadingProxies();
@@ -59,7 +59,7 @@ public class Startup {
                                     connectionString = Configuration.GetConnectionString("ConnectionString");
                                 }
                                 ArgumentNullException.ThrowIfNull(connectionString);
-                                auditHistoryDbContextOptions.UseSqlServer(connectionString);
+                                auditHistoryDbContextOptions.UseMySQL(connectionString);
                                 auditHistoryDbContextOptions.UseChangeTrackingProxies();
                                 auditHistoryDbContextOptions.UseObjectSpaceLinkProxies();
                                 auditHistoryDbContextOptions.UseLazyLoadingProxies();

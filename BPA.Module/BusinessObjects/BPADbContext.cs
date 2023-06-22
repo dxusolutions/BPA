@@ -14,7 +14,7 @@ namespace BPA.Module.BusinessObjects;
 public class BPAContextInitializer : DbContextTypesInfoInitializerBase {
 	protected override DbContext CreateDbContext() {
 		var optionsBuilder = new DbContextOptionsBuilder<BPAEFCoreDbContext>()
-            .UseSqlServer(";")
+            .UseMySQL(";")
             .UseChangeTrackingProxies()
             .UseObjectSpaceLinkProxies();
         return new BPAEFCoreDbContext(optionsBuilder.Options);
@@ -23,13 +23,13 @@ public class BPAContextInitializer : DbContextTypesInfoInitializerBase {
 //This factory creates DbContext for design-time services. For example, it is required for database migration.
 public class BPADesignTimeDbContextFactory : IDesignTimeDbContextFactory<BPAEFCoreDbContext> {
 	public BPAEFCoreDbContext CreateDbContext(string[] args) {
-		throw new InvalidOperationException("Make sure that the database connection string and connection provider are correct. After that, uncomment the code below and remove this exception.");
-		//var optionsBuilder = new DbContextOptionsBuilder<BPAEFCoreDbContext>();
-		//optionsBuilder.UseSqlServer("Integrated Security=SSPI;Data Source=(localdb)\\mssqllocaldb;Initial Catalog=BPA");
-        //optionsBuilder.UseChangeTrackingProxies();
-        //optionsBuilder.UseObjectSpaceLinkProxies();
-		//return new BPAEFCoreDbContext(optionsBuilder.Options);
-	}
+        //throw new InvalidOperationException("Make sure that the database connection string and connection provider are correct. After that, uncomment the code below and remove this exception.");
+        var optionsBuilder = new DbContextOptionsBuilder<BPAEFCoreDbContext>();
+        optionsBuilder.UseMySQL("Integrated Security=SSPI;Data Source=(localdb)\\mssqllocaldb;Initial Catalog=BPA");
+        optionsBuilder.UseChangeTrackingProxies();
+        optionsBuilder.UseObjectSpaceLinkProxies();
+        return new BPAEFCoreDbContext(optionsBuilder.Options);
+    }
 }
 [TypesInfoInitializer(typeof(BPAContextInitializer))]
 public class BPAEFCoreDbContext : DbContext {
