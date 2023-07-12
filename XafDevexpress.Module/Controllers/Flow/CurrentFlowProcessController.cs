@@ -32,7 +32,8 @@ namespace XafDevexpress.Module.Controllers
         {
             if (View.CurrentObject is BaseFlow baseFlow)
             {
-                var detailView = Application.CreateDetailView(this.ObjectSpace, baseFlow);
+                var objectSpace = Application.CreateObjectSpace(typeof(BaseFlow));
+                var detailView = Application.CreateDetailView(objectSpace, objectSpace.GetObjectByKey<BaseFlow>(baseFlow.ID));
                 detailView.ViewEditMode = ViewEditMode.Edit;
                 Application.MainWindow.SetView(detailView);
                 e.Handled = true;

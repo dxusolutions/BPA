@@ -53,20 +53,5 @@ namespace XafDevexpress.Module.BusinessObjects
         public virtual FlowDiagram NextFlowDiagram { get; set; }
 
         public virtual FlowStatus Status { get; set; } = FlowStatus.Inprocess;
-
-        public void GetAllCurrentFlow()
-        {
-            //if (BaseFlows.Count == 0)
-            //{
-            //    string empty = Guid.Empty.ToString();
-
-            //    var r = this.ObjectSpace.GetObjects<BaseFlow>(CriteriaOperator.FromLambda<BaseFlow>(x => x.NextFlow.ToString() == empty))
-            //                            .Where(x => x.FlowDiagramDetail.FlowDiagram.ID == this.ID);
-            //    if (r.Count() > 0)
-            //    {
-            //        BaseFlows = new ObservableCollection<BaseFlow>(r);
-            //    }
-            //}
-        }
     }
 }

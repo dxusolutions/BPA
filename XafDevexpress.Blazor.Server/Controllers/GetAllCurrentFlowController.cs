@@ -52,15 +52,5 @@ namespace XafDevexpress.Blazor.Server.Controllers
                 }
             }
 		}
-
-        protected override void OnViewControlsCreated()
-        {
-            base.OnViewControlsCreated();
-
-            if (this.View.CurrentObject is FlowDiagram flowDiagram)
-            {
-                Task.Run(() => flowDiagram.GetAllCurrentFlow());
-            }
-        }
     }
 }

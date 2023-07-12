@@ -1,9 +1,12 @@
-﻿using DevExpress.ExpressApp;
+﻿using Blazor.Diagrams.Core.Models;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
+using DevExpress.ExpressApp.Blazor.Components;
 using DevExpress.ExpressApp.Blazor.Components.Models;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.SystemModule;
 using DevExpress.Persistent.Base;
+using DevExpress.XtraReports.Design.ParameterEditor;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Security.AccessControl;
@@ -12,6 +15,7 @@ using XafDevexpress.Blazor.Server.BusinessClass;
 using XafDevexpress.Blazor.Server.Editors;
 using XafDevexpress.Blazor.Server.Model;
 using XafDevexpress.Module.BusinessObjects;
+using static DevExpress.Xpo.Helpers.AssociatedCollectionCriteriaHelper;
 using static System.Net.Mime.MediaTypeNames;
 using static XafDevexpress.Blazor.Server.Editors.FlowDiagramViewItemBlazor;
 using static XafDevexpress.Blazor.Server.Editors.FlowProcessViewItemBlazor;
@@ -49,75 +53,47 @@ namespace XafDevexpress.Blazor.Server.Controllers
 
         private void ObjectSpace_Committing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-			flowDiagramModel.ProcessSave();
-            var flowDiagram = this.View.CurrentObject as FlowDiagram;
+            var flowDiagram = View.CurrentObject as FlowDiagram;
 
-            int i = 0;
-            while (i < flowDiagram.FlowDiagramDetails.Count)
+            foreach (var detail in flowDiagramModel.Diagram.Nodes)
             {
-                var node = flowDiagram.FlowDiagramDetails[i];
-                if (flowDiagramModel.FlowDiagramDetail.Any(x => x.ID.ToString() == node.ID.ToString()) == false)
+                var item = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == detail.Id.ToString());
+                if (item.IsDeleted)
                 {
-					this.ObjectSpace.Delete(node);
-                    flowDiagram.FlowDiagramDetails.Remove(node);
+                    ObjectSpace.Delete(item);
                     continue;
                 }
-                i++;
-            }
-            foreach (var detail in flowDiagramModel.FlowDiagramDetail)
-			{
-				var item = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == detail.ID.ToString());
-				if (item == null)
-				{
-					item = this.ObjectSpace.CreateObject(typeof(FlowDiagramDetail)) as FlowDiagramDetail;
-					flowDiagram.FlowDiagramDetails.Add(item);
-				}
-				item.Name = detail.Name;
-				item.X = detail.X;
-				item.Y = detail.Y;
-				item.FlowDiagram = flowDiagram;
-				item.FlowStep = detail.FlowStep;
+				item.X = detail.Position.X;
+				item.Y = detail.Position.Y;
 			}
 
-            i = 0;
-            while (i < flowDiagram.FlowDiagramLinks.Count)
+            foreach (var detail in flowDiagramModel.Diagram.Links)
             {
-                var link = flowDiagram.FlowDiagramLinks[i];
-                if (flowDiagramModel.FlowDiagramLink.Any(x => x.ID.ToString() == link.ID.ToString()) == false)
-                {
-                    this.ObjectSpace.Delete(link);
-                    flowDiagram.FlowDiagramLinks.Remove(link);
-                    continue;
-                }
-                i++;
-            }
-            foreach (var detail in flowDiagramModel.FlowDiagramLink)
-            {
-                var item = flowDiagram.FlowDiagramLinks.FirstOrDefault(x => x.ID.ToString() == detail.ID.ToString());
+                var item = flowDiagram.FlowDiagramLinks.FirstOrDefault(x => x.ID.ToString() == detail.Id.ToString());
                 if (item == null)
                 {
-                    item = this.ObjectSpace.CreateObject(typeof(FlowDiagramLink)) as FlowDiagramLink;
+                    item = ObjectSpace.CreateObject(typeof(FlowDiagramLink)) as FlowDiagramLink;
                     flowDiagram.FlowDiagramLinks.Add(item);
                 }
-                item.Source = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == detail.Source.ID.ToString());
+                item.Source = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == detail.SourceNode.Id.ToString());
                 if (item.Source == null)
                 {
                     item.Source = flowDiagram.FlowDiagramDetails
-                                    .FirstOrDefault(x => x.FlowStep.Name.ToString() == detail.Source.FlowStep.Name.ToString()
-                                                        && x.X == detail.Source.X
-                                                        && x.Y == detail.Source.Y);
+                                    .FirstOrDefault(x => x.FlowStep.Name.ToString() == detail.SourceNode.Title.ToString()
+                                                        && x.X == detail.SourceNode.Position.X
+                                                        && x.Y == detail.SourceNode.Position.Y);
                 }
-                item.SourcePortAlignment = detail.SourcePortAlignment;
-                item.Target = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == detail.Target.ID.ToString());
+                item.SourcePortAlignment = detail.SourcePort.Alignment.ToString();
+                item.Target = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == detail.TargetNode.Id.ToString());
 				if (item.Target == null)
 				{
 					item.Target = flowDiagram.FlowDiagramDetails
-									.FirstOrDefault(x => x.FlowStep.Name.ToString() == detail.Target.FlowStep.Name.ToString()
-														&& x.X == detail.Target.X
-                                                        && x.Y == detail.Target.Y);
+									.FirstOrDefault(x => x.FlowStep.Name.ToString() == detail.TargetNode.Title.ToString()
+														&& x.X == detail.TargetNode.Position.X
+                                                        && x.Y == detail.TargetNode.Position.Y);
 				}
-                item.TargetPortAlignment = detail.TargetPortAlignment;
-                item.Status = detail.Status;
+                item.TargetPortAlignment = detail.TargetPort.Alignment.ToString();
+                item.Status = detail.Labels.FirstOrDefault().Content.Contains("Reject") ? FlowStatus.Reject : FlowStatus.Submit; 
                 item.FlowDiagram = flowDiagram;
             }
         }
@@ -127,12 +103,104 @@ namespace XafDevexpress.Blazor.Server.Controllers
 			if (this.View.CurrentObject is FlowDiagram flowDiagram)
 			{
 				flowDiagramModel = ((FlowDiagramHolder)((FlowDiagramViewItemBlazor)sender).Control).ComponentModel;
-                flowDiagramModel.FlowDiagramID = flowDiagram.ID;
-                flowDiagramModel.Application = Application;
                 flowDiagramModel.InitDiagram();
-                flowDiagramModel.InitFlow();
+                InitFlow(flowDiagram.ID);
+                //
+                flowDiagramModel.OpenFlowDetailEvent += FlowDiagramModel_OpenFlowDetailEvent;
+                flowDiagramModel.DeleteFlowDetailEvent += FlowDiagramModel_DeleteFlowDetailEvent;
+                flowDiagramModel.RemoveLinkEvent += FlowDiagramModel_RemoveLinkEvent;
             }
 		}
+
+        private void FlowDiagramModel_RemoveLinkEvent(global::Blazor.Diagrams.Core.Models.Base.BaseLinkModel link)
+        {
+            var linkObj = this.ObjectSpace.GetObjectByKey<FlowDiagramLink>(new Guid(link.Id));
+            ObjectSpace.Delete(linkObj);
+        }
+
+        private void FlowDiagramModel_DeleteFlowDetailEvent(string Id)
+        {
+            if (View.CurrentObject is FlowDiagram flowDiagram)
+            {
+                var item = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == Id.ToString());
+                this.ObjectSpace.Delete(item);
+            }
+        }
+
+        private void FlowDiagramModel_OpenFlowDetailEvent(string Id)
+        {
+            if (this.View.CurrentObject is FlowDiagram flowDiagram)
+            {
+                FlowDiagramDetail currentObject;
+                var objectSpace = Application.CreateObjectSpace(typeof(FlowDiagramDetail));
+                if (string.IsNullOrWhiteSpace(Id))
+                {
+                    currentObject = objectSpace.CreateObject(typeof(FlowDiagramDetail)) as FlowDiagramDetail;
+                    currentObject.FlowDiagram = objectSpace.GetObjectByKey<FlowDiagram>(flowDiagram.ID);
+                    var detailView = Application.CreateDetailView(objectSpace, currentObject, false);
+                    detailView.ViewEditMode = ViewEditMode.Edit;
+                    Application.ShowViewStrategy.ShowViewInPopupWindow(detailView, () =>
+                    {
+                        currentObject.IsNew = true;
+                        flowDiagram.FlowDiagramDetails.Add(currentObject);
+
+                        objectSpace.CommitChanges();
+
+                        var node1 = flowDiagramModel.NewNode(currentObject.ID.ToString(), 20, 20);
+                        node1.Title = currentObject.Name;
+                        flowDiagramModel.Diagram.Nodes.Add(node1);
+                    });
+                }
+                else
+                {
+                    currentObject = objectSpace.GetObjectByKey<FlowDiagramDetail>(new Guid(Id));
+                    var detailView = Application.CreateDetailView(objectSpace, currentObject, false);
+                    detailView.ViewEditMode = ViewEditMode.Edit;
+                    Application.ShowViewStrategy.ShowViewInPopupWindow(detailView, () =>
+                    {
+                        var item = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == currentObject.ID.ToString());
+                        item.FlowStep = currentObject.FlowStep;
+                        item.Name = currentObject.Name;
+
+                        objectSpace.CommitChanges();
+
+                        var node1 = flowDiagramModel.NewNode(currentObject.ID.ToString(), 20, 20);
+                        node1.Title = currentObject.Name;
+                        flowDiagramModel.Diagram.Nodes.Add(node1);
+                    });
+                }
+            }
+        }
+
+        private void InitFlow(Guid Id)
+        {
+            var objectSpace = this.ObjectSpace;
+            var flowDiagram = objectSpace.GetObjectByKey<FlowDiagram>(Id);
+            foreach (var detail in flowDiagram?.FlowDiagramDetails)
+            {
+                var node1 = flowDiagramModel.NewNode(detail.ID.ToString(), detail.X, detail.Y);
+                node1.Title = detail.Name;
+                flowDiagramModel.Diagram.Nodes.Add(node1);
+            }
+
+            foreach (var link in flowDiagram?.FlowDiagramLinks)
+            {
+                var source = flowDiagramModel.Diagram.Nodes.FirstOrDefault(x => x.Id == link.Source.ID.ToString());
+                var target = flowDiagramModel.Diagram.Nodes.FirstOrDefault(x => x.Id == link.Target.ID.ToString());
+                if (source != null && target != null)
+                {
+                    flowDiagramModel.Diagram.Links.Add(new LinkModel(link.ID.ToString(), source.Ports.FirstOrDefault(x => x.Alignment.ToString() == link.SourcePortAlignment),
+                            target.Ports.FirstOrDefault(x => x.Alignment.ToString() == link.TargetPortAlignment)));
+
+                    var newLink = new FlowDiagramLink();
+                    newLink.Source = link.Source;
+                    newLink.SourcePortAlignment = link.SourcePortAlignment;
+                    newLink.Target = link.Target;
+                    newLink.TargetPortAlignment = link.TargetPortAlignment;
+                    newLink.Status = link.Status;
+                }
+            }
+        }
 
         protected override void OnDeactivated()
 		{

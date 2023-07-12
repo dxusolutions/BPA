@@ -2,11 +2,6 @@
 <Application>
   <NavigationItems NavigationStyle="Accordion">
     <Items>
-      <Item Id="Default">
-        <Items>
-          <Item Id="FlowProcessPage" ViewId="FlowProcessPage" Caption="Flow Process Page" IsNewNode="True" />
-        </Items>
-      </Item>
       <Item Id="KPI" Removed="True" />
       <Item Id="Reports">
         <Items>

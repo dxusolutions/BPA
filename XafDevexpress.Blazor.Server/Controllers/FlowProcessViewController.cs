@@ -15,7 +15,7 @@ namespace XafDevexpress.Blazor.Server.Controllers
 		SimpleAction simpleAction;
 		SimpleAction saveAction;
 		SimpleAction nextDiagram;
-		FlowDiagramDetail nextFlowDetail;
+		Guid nextFlowDetail;
 
 		// Use CodeRush to create Controllers and Actions with a few keystrokes.
 		// https://docs.devexpress.com/CodeRushForRoslyn/403133/
@@ -160,20 +160,21 @@ namespace XafDevexpress.Blazor.Server.Controllers
 		private void Action_Execute(object sender, SimpleActionExecuteEventArgs e)
 		{
 			if (this.View.CurrentObject is BaseFlow baseFlow)
-			{
-				var objectSpace = this.ObjectSpace;
+            {
+                var objectSpace = Application.CreateObjectSpace(typeof(BaseFlow));
+                var next = objectSpace.GetObjectByKey<FlowDiagramDetail>(nextFlowDetail);
                 BaseFlow newObj = objectSpace.CreateObject(typeof(BaseFlow)) as BaseFlow;
 				newObj.PrevFlow = baseFlow.ID;
 				newObj.BeginFlow = baseFlow.BeginFlow;
-				newObj.Name = nextFlowDetail.Name;
-				newObj.FlowDiagramDetail = nextFlowDetail;
+				newObj.Name = next.Name;
+				newObj.FlowDiagramDetail = next;
 
 				if (baseFlow != null && baseFlow.NextFlow != newObj.ID)
 				{
 					baseFlow.NextFlow = newObj.ID;
 				}
 
-				e.ShowViewParameters.CreatedView = Application.CreateDetailView(objectSpace, baseFlow);
+				e.ShowViewParameters.CreatedView = Application.CreateDetailView(objectSpace, newObj);
 			}
 		}
 
@@ -189,13 +190,14 @@ namespace XafDevexpress.Blazor.Server.Controllers
 					var dbContext = ((objectSpace as DevExpress.ExpressApp.EFCore.EFCoreObjectSpace).DbContext as XafDevexpressEFCoreDbContext);
 					var flowDiagramDetail = await dbContext.FlowDiagramDetail.FirstOrDefaultAsync(x => x.ID == baseFlow.FlowDiagramDetail.ID);
 
-					nextFlowDetail = flowDiagramDetail.FlowDiagram.FlowDiagramLinks
+					var next = flowDiagramDetail.FlowDiagram.FlowDiagramLinks
 												.Where(x => x.Source.ID.ToString() == flowDiagramDetail.ID.ToString()
 														&& x.Status.ToString() == baseFlow.Status.ToString())
 												.FirstOrDefault()?.Target;
-					if (nextFlowDetail != null)
-					{
-						var nextFlowName = nextFlowDetail.Name;
+					if (next != null)
+                    {
+                        nextFlowDetail = next.ID;
+                        var nextFlowName = next.Name;
 						if (!string.IsNullOrWhiteSpace(nextFlowName))
 						{
 							simpleAction.Caption = nextFlowName;
