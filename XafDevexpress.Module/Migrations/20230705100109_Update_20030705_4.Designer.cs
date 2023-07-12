@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using XafDevexpress.Module.BusinessObjects;
 
@@ -11,9 +12,11 @@ using XafDevexpress.Module.BusinessObjects;
 namespace XafDevexpress.Module.Migrations
 {
     [DbContext(typeof(XafDevexpressEFCoreDbContext))]
-    partial class XafDevexpressEFCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230705100109_Update_20030705_4")]
+    partial class Update_20030705_4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -459,34 +462,6 @@ namespace XafDevexpress.Module.Migrations
                     b.ToTable("BaseFlow");
                 });
 
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.BaseFlowField", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("BaseFlowID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TypeFullName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("BaseFlowID");
-
-                    b.ToTable("BaseFlowField");
-                });
-
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.Employee", b =>
                 {
                     b.Property<Guid>("ID")
@@ -510,17 +485,11 @@ namespace XafDevexpress.Module.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DiagramSerialize")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("NextFlowDiagramID")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -538,60 +507,17 @@ namespace XafDevexpress.Module.Migrations
                     b.Property<Guid?>("FlowDiagramID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FlowStepID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("X")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Y")
-                        .HasColumnType("float");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("FlowDiagramID");
-
-                    b.HasIndex("FlowStepID");
-
-                    b.ToTable("FlowDiagramDetail");
-                });
-
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagramLink", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FlowDiagramID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SourceID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SourcePortAlignment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
+                    b.Property<int>("Sort")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TargetID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TargetPortAlignment")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("ID");
 
                     b.HasIndex("FlowDiagramID");
 
-                    b.HasIndex("SourceID");
-
-                    b.HasIndex("TargetID");
-
-                    b.ToTable("FlowDiagramLink");
+                    b.ToTable("FlowDiagramDetail");
                 });
 
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowField", b =>
@@ -600,7 +526,7 @@ namespace XafDevexpress.Module.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FlowStepID")
+                    b.Property<Guid?>("FlowDiagramDetailID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Input")
@@ -612,31 +538,17 @@ namespace XafDevexpress.Module.Migrations
                     b.Property<bool>("Output")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Tyle")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TypeFullName")
+                    b.Property<string>("TyleFullName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("FlowStepID");
+                    b.HasIndex("FlowDiagramDetailID");
 
                     b.ToTable("FlowField");
-                });
-
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowStep", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("FlowStep");
                 });
 
             modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.Event", b =>
@@ -736,15 +648,6 @@ namespace XafDevexpress.Module.Migrations
                     b.Navigation("FlowDiagramDetail");
                 });
 
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.BaseFlowField", b =>
-                {
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.BaseFlow", "BaseFlow")
-                        .WithMany("AllFields")
-                        .HasForeignKey("BaseFlowID");
-
-                    b.Navigation("BaseFlow");
-                });
-
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagram", b =>
                 {
                     b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagram", "NextFlowDiagram")
@@ -761,43 +664,16 @@ namespace XafDevexpress.Module.Migrations
                         .HasForeignKey("FlowDiagramID")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowStep", "FlowStep")
-                        .WithMany()
-                        .HasForeignKey("FlowStepID");
-
                     b.Navigation("FlowDiagram");
-
-                    b.Navigation("FlowStep");
-                });
-
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagramLink", b =>
-                {
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagram", "FlowDiagram")
-                        .WithMany("FlowDiagramLinks")
-                        .HasForeignKey("FlowDiagramID");
-
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", "Source")
-                        .WithMany()
-                        .HasForeignKey("SourceID");
-
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", "Target")
-                        .WithMany()
-                        .HasForeignKey("TargetID");
-
-                    b.Navigation("FlowDiagram");
-
-                    b.Navigation("Source");
-
-                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowField", b =>
                 {
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowStep", "FlowStep")
+                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", "FlowDiagramDetail")
                         .WithMany("AllFields")
-                        .HasForeignKey("FlowStepID");
+                        .HasForeignKey("FlowDiagramDetailID");
 
-                    b.Navigation("FlowStep");
+                    b.Navigation("FlowDiagramDetail");
                 });
 
             modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.Event", b =>
@@ -826,19 +702,12 @@ namespace XafDevexpress.Module.Migrations
                     b.Navigation("UserItems");
                 });
 
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.BaseFlow", b =>
-                {
-                    b.Navigation("AllFields");
-                });
-
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagram", b =>
                 {
                     b.Navigation("FlowDiagramDetails");
-
-                    b.Navigation("FlowDiagramLinks");
                 });
 
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowStep", b =>
+            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", b =>
                 {
                     b.Navigation("AllFields");
                 });

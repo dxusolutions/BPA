@@ -14,8 +14,17 @@
     <title>XafDevexpress</title>
     <base href="~/" />
     <component type="typeof(BootstrapThemeLink)" render-mode="Static" />
+
+
+    <!-- in the head element -->
+    <link href="_content/Z.Blazor.Diagrams/style.min.css" rel="stylesheet" />
+    <!-- if you want the default styling -->
+    <link href="_content/Z.Blazor.Diagrams/default.styles.min.css" rel="stylesheet" />
 </head>
 <body>
+    <!-- in the body element -->
+    <script src="_content/Z.Blazor.Diagrams/script.min.js"></script>
+
     @{
         string userAgent = Request.Headers["User-Agent"];
         bool isIE = userAgent.Contains("MSIE") || userAgent.Contains("Trident");

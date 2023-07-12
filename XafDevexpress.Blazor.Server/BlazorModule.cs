@@ -9,6 +9,7 @@ using DevExpress.ExpressApp.Model.Core;
 using DevExpress.ExpressApp.Model.DomainLogics;
 using DevExpress.ExpressApp.Model.NodeGenerators;
 using DevExpress.Persistent.BaseImpl.EF;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace XafDevexpress.Blazor.Server;
 
@@ -22,5 +23,16 @@ public sealed class XafDevexpressBlazorModule : ModuleBase {
     }
     public override void Setup(XafApplication application) {
         base.Setup(application);
-    }
+
+		application.LoggedOn += Application_LoggedOn;
+	}
+
+	private void Application_LoggedOn(object sender, LogonEventArgs e)
+	{
+		if (SecuritySystem.CurrentUserName != null)
+		{
+			//ServiceProvider.GetService<IJSRuntime>().InvokeVoidAsync("RedirectTo", "/EmployeeList");
+			((XafApplication)sender).ServiceProvider.GetService<Microsoft.AspNetCore.Components.NavigationManager>().NavigateTo("/FlowProcessPage");
+		}
+	}
 }

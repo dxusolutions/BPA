@@ -8,15 +8,8 @@ namespace XafDevexpress.Module.BusinessObjects
 {
     public enum FlowStatus
     {
-        Draft,
         Inprocess,
-        Done,
-    }
-
-    public enum InterviewStatus
-    {
-        Pending,
-        Failed,
-        Pass,
+        Submit,
+        Reject,
     }
 }

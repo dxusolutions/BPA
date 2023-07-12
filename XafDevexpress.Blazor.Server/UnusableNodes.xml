@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application>
+  <NavigationItems Id="NavigationItems">
+    <Items Id="Items">
+      <Item Id="Default">
+        <Items Id="Items">
+          <Item Id="@b3301860-eb51-45eb-a617-b22af1fcdb05" ViewId="FlowProcess" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+</Application>

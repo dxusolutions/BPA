@@ -5,7 +5,7 @@ using DevExpress.ExpressApp.Design;
 using DevExpress.ExpressApp.EFCore.DesignTime;
 using DevExpress.Persistent.BaseImpl.EFCore.AuditTrail;
 using DevExpress.Persistent.BaseImpl.EF.Kpi;
-using XafDevexpress.Module.BusinessObjects.Flow;
+using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 
 namespace XafDevexpress.Module.BusinessObjects;
 
@@ -48,19 +48,15 @@ public class XafDevexpressEFCoreDbContext : DbContext
     public DbSet<AuditEFCoreWeakReference> AuditEFCoreWeakReference { get; set; }
     public DbSet<Event> Event { get; set; }
     public DbSet<Analysis> Analysis { get; set; }
-
-    public DbSet<Employee> Employee { get; set; }
+	public DbSet<Employee> Employee { get; set; }
 
     #region Flow
     public DbSet<FlowDiagram> FlowDiagram { get; set; }
     public DbSet<FlowDiagramDetail> FlowDiagramDetail { get; set; }
     public DbSet<BaseFlow> BaseFlow { get; set; }
-    public DbSet<BackOfficeFlow> BackOfficeFlow { get; set; }
-    public DbSet<InterviewFlow> InterviewFlow { get; set; }
-    public DbSet<ScanCvFlow> ScanCvFlow { get; set; }
-    public DbSet<RequestLastDayFlow> RequestLastDayFlow { get; set; }
-    public DbSet<ConfirmLastDayFlow> ConfirmLastDayFlow { get; set; }
-    public DbSet<SubmitLastDayFlow> SubmitLastDayFlow { get; set; }
+    public DbSet<BaseFlowField> BaseFlowField { get; set; }
+    public DbSet<FlowField> FlowField { get; set; }
+    public DbSet<FlowStep> FlowStep { get; set; }
     #endregion Flow
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
@@ -84,13 +80,6 @@ public class XafDevexpressEFCoreDbContext : DbContext
             .HasMany(r => r.FlowDiagramDetails)
             .WithOne(x => x.FlowDiagram)
             .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<BackOfficeFlow>().ToTable("BackOfficeFlow");
-        modelBuilder.Entity<InterviewFlow>().ToTable("InterviewFlow");
-        modelBuilder.Entity<ScanCvFlow>().ToTable("ScanCvFlow");
-        modelBuilder.Entity<RequestLastDayFlow>().ToTable("RequestLastDayFlow");
-        modelBuilder.Entity<SubmitLastDayFlow>().ToTable("SubmitLastDayFlow");
-        modelBuilder.Entity<ConfirmLastDayFlow>().ToTable("ConfirmLastDayFlow");
     }
 }
 

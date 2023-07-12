@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application>
+  <Views Id="Views">
+    <DetailView Id="FlowNonPersistent_DetailView">
+      <Layout Id="Layout">
+        <LayoutGroup Id="Main" RelativeSize="100">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="100">
+            <LayoutGroup Id="FlowNonPersistent" RelativeSize="100" Direction="Horizontal" Caption="FlowNonPersistent">
+              <LayoutGroup Id="Auto475baff0-b1d1-45c5-8c80-21655de7b8b6" ShowCaption="False" Caption="" Index="0" RelativeSize="48.81974248927039">
+                <LayoutItem Id="BaseFlow.Name" ViewItem="BaseFlow.Name" Index="0" RelativeSize="3.747072599531616" />
+                <LayoutItem Id="BaseFlow.Note" ViewItem="BaseFlow.Note" Index="1" RelativeSize="2.810304449648712" />
+                <LayoutGroup Id="Autoa46f5976-e1b4-487b-b1db-5147ab4b9e62" ShowCaption="False" Caption="Autoa46f5976-e1b4-487b-b1db-5147ab4b9e62(6)" Index="2" RelativeSize="93.44262295081967">
+                  <LayoutItem Id="BaseFlow.Status" ViewItem="BaseFlow.Status" Index="0" RelativeSize="100" />
+                </LayoutGroup>
+              </LayoutGroup>
+              <LayoutItem Id="@b89475b6-960e-42a9-a784-e53091b1328a" ViewItem="FlowProcessPage" Index="1" RelativeSize="51.18025751072961" />
+              <LayoutItem Id="BaseFlow.Name" RelativeSize="3.747072599531616" Removed="True" />
+              <LayoutItem Id="BaseFlow.Note" RelativeSize="2.810304449648712" Removed="True" />
+              <LayoutItem Id="BaseFlow.Status" Removed="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+  </Views>
+  <NavigationItems Id="NavigationItems">
+    <Items Id="Items">
+      <Item Id="Default">
+        <Items Id="Items">
+          <Item Id="FlowProcessPage" ViewId="FlowProcessPage" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+</Application>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using XafDevexpress.Module.BusinessObjects;
 
@@ -11,9 +12,11 @@ using XafDevexpress.Module.BusinessObjects;
 namespace XafDevexpress.Module.Migrations
 {
     [DbContext(typeof(XafDevexpressEFCoreDbContext))]
-    partial class XafDevexpressEFCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230707081057_Update_20230707_1")]
+    partial class Update_20230707_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -275,6 +278,200 @@ namespace XafDevexpress.Module.Migrations
                     b.ToTable("KpiScorecard");
                 });
 
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyActionPermissionObject", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RoleID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RoleID");
+
+                    b.ToTable("PermissionPolicyActionPermissionObject");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyMemberPermissionsObject", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Criteria")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Members")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ReadState")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TypePermissionObjectID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("WriteState")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("TypePermissionObjectID");
+
+                    b.ToTable("PermissionPolicyMemberPermissionsObject");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyNavigationPermissionObject", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ItemPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NavigateState")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("RoleID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TargetTypeFullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RoleID");
+
+                    b.ToTable("PermissionPolicyNavigationPermissionObject");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyObjectPermissionsObject", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Criteria")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DeleteState")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NavigateState")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReadState")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TypePermissionObjectID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("WriteState")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("TypePermissionObjectID");
+
+                    b.ToTable("PermissionPolicyObjectPermissionsObject");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRoleBase", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("CanEditModel")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdministrative")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAllowPermissionPriority")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PermissionPolicy")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("PermissionPolicyRoleBase");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("PermissionPolicyRoleBase");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyTypePermissionObject", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CreateState")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DeleteState")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NavigateState")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReadState")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("RoleID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TargetTypeFullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("WriteState")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RoleID");
+
+                    b.ToTable("PermissionPolicyTypePermissionObject");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyUser", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("ChangePasswordOnFirstLogon")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StoredPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("User");
+                });
+
             modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.ReportDataV2", b =>
                 {
                     b.Property<Guid>("ID")
@@ -425,6 +622,21 @@ namespace XafDevexpress.Module.Migrations
                     b.ToTable("KpiInstanceKpiScorecard");
                 });
 
+            modelBuilder.Entity("PermissionPolicyRolePermissionPolicyUser", b =>
+                {
+                    b.Property<Guid>("RolesID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UsersID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RolesID", "UsersID");
+
+                    b.HasIndex("UsersID");
+
+                    b.ToTable("PermissionPolicyRolePermissionPolicyUser");
+                });
+
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.BaseFlow", b =>
                 {
                     b.Property<Guid>("ID")
@@ -510,17 +722,11 @@ namespace XafDevexpress.Module.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DiagramSerialize")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("NextFlowDiagramID")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -544,11 +750,8 @@ namespace XafDevexpress.Module.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("X")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Y")
-                        .HasColumnType("float");
+                    b.Property<int>("Sort")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -557,41 +760,6 @@ namespace XafDevexpress.Module.Migrations
                     b.HasIndex("FlowStepID");
 
                     b.ToTable("FlowDiagramDetail");
-                });
-
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagramLink", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FlowDiagramID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SourceID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SourcePortAlignment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("TargetID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TargetPortAlignment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("FlowDiagramID");
-
-                    b.HasIndex("SourceID");
-
-                    b.HasIndex("TargetID");
-
-                    b.ToTable("FlowDiagramLink");
                 });
 
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowField", b =>
@@ -639,6 +807,13 @@ namespace XafDevexpress.Module.Migrations
                     b.ToTable("FlowStep");
                 });
 
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRole", b =>
+                {
+                    b.HasBaseType("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRoleBase");
+
+                    b.HasDiscriminator().HasValue("PermissionPolicyRole");
+                });
+
             modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.Event", b =>
                 {
                     b.HasOne("DevExpress.Persistent.BaseImpl.EF.Event", "RecurrencePattern")
@@ -668,6 +843,51 @@ namespace XafDevexpress.Module.Migrations
                         .IsRequired();
 
                     b.Navigation("KpiDefinition");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyActionPermissionObject", b =>
+                {
+                    b.HasOne("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRoleBase", "Role")
+                        .WithMany("ActionPermissions")
+                        .HasForeignKey("RoleID");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyMemberPermissionsObject", b =>
+                {
+                    b.HasOne("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyTypePermissionObject", "TypePermissionObject")
+                        .WithMany("MemberPermissions")
+                        .HasForeignKey("TypePermissionObjectID");
+
+                    b.Navigation("TypePermissionObject");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyNavigationPermissionObject", b =>
+                {
+                    b.HasOne("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRoleBase", "Role")
+                        .WithMany("NavigationPermissions")
+                        .HasForeignKey("RoleID");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyObjectPermissionsObject", b =>
+                {
+                    b.HasOne("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyTypePermissionObject", "TypePermissionObject")
+                        .WithMany("ObjectPermissions")
+                        .HasForeignKey("TypePermissionObjectID");
+
+                    b.Navigation("TypePermissionObject");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyTypePermissionObject", b =>
+                {
+                    b.HasOne("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRoleBase", "Role")
+                        .WithMany("TypePermissions")
+                        .HasForeignKey("RoleID");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EFCore.AuditTrail.AuditDataItemPersistent", b =>
@@ -727,6 +947,21 @@ namespace XafDevexpress.Module.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PermissionPolicyRolePermissionPolicyUser", b =>
+                {
+                    b.HasOne("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRole", null)
+                        .WithMany()
+                        .HasForeignKey("RolesID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.BaseFlow", b =>
                 {
                     b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", "FlowDiagramDetail")
@@ -770,27 +1005,6 @@ namespace XafDevexpress.Module.Migrations
                     b.Navigation("FlowStep");
                 });
 
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagramLink", b =>
-                {
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagram", "FlowDiagram")
-                        .WithMany("FlowDiagramLinks")
-                        .HasForeignKey("FlowDiagramID");
-
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", "Source")
-                        .WithMany()
-                        .HasForeignKey("SourceID");
-
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", "Target")
-                        .WithMany()
-                        .HasForeignKey("TargetID");
-
-                    b.Navigation("FlowDiagram");
-
-                    b.Navigation("Source");
-
-                    b.Navigation("Target");
-                });
-
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowField", b =>
                 {
                     b.HasOne("XafDevexpress.Module.BusinessObjects.FlowStep", "FlowStep")
@@ -815,6 +1029,22 @@ namespace XafDevexpress.Module.Migrations
                     b.Navigation("HistoryItems");
                 });
 
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRoleBase", b =>
+                {
+                    b.Navigation("ActionPermissions");
+
+                    b.Navigation("NavigationPermissions");
+
+                    b.Navigation("TypePermissions");
+                });
+
+            modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyTypePermissionObject", b =>
+                {
+                    b.Navigation("MemberPermissions");
+
+                    b.Navigation("ObjectPermissions");
+                });
+
             modelBuilder.Entity("DevExpress.Persistent.BaseImpl.EFCore.AuditTrail.AuditEFCoreWeakReference", b =>
                 {
                     b.Navigation("AuditItems");
@@ -834,8 +1064,6 @@ namespace XafDevexpress.Module.Migrations
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagram", b =>
                 {
                     b.Navigation("FlowDiagramDetails");
-
-                    b.Navigation("FlowDiagramLinks");
                 });
 
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowStep", b =>

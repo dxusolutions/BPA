@@ -1,19 +1,20 @@
-using DevExpress.Charts.Native;
+using DevExpress.Data.Filtering;
+using DevExpress.ExpressApp;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.EF;
-using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 
 namespace XafDevexpress.Module.BusinessObjects
 {
     // Register this entity in your DbContext (usually in the BusinessObjects folder of your project) with the "public DbSet<BaseFlow> BaseFlows { get; set; }" syntax.
     [DefaultClassOptions]
-    [NavigationItem(false)]
     //[ImageName("BO_Contact")]
-    //[DefaultProperty("Name")]
+    [DefaultProperty("FlowDiagramDetail.Name")]
     //[DefaultListViewOptions(MasterDetailMode.ListViewOnly, false, NewItemRowPosition.None)]
     // Specify more UI options using a declarative approach (https://documentation.devexpress.com/#eXpressAppFramework/CustomDocument112701).
     // You do not need to implement the INotifyPropertyChanged interface - EF Core implements it automatically.
@@ -50,6 +51,10 @@ namespace XafDevexpress.Module.BusinessObjects
         [VisibleInDashboards(false)]
         public virtual FlowDiagramDetail FlowDiagramDetail { get; set; }
 
+        [Browsable(false)]
+        [DevExpress.ExpressApp.DC.Aggregated]
+        public virtual IList<BaseFlowField> AllFields { get; set; } = new ObservableCollection<BaseFlowField>();
+
         public override void OnSaving()
         {
             if (PrevFlow == Guid.Empty)
@@ -58,9 +63,9 @@ namespace XafDevexpress.Module.BusinessObjects
             base.OnSaving();
         }
 
-        public virtual bool CanProcessNext()
+        public bool CanProcessNext()
         {
-            return Status == FlowStatus.Done;
+            return Status != FlowStatus.Inprocess;
         }
     }
 }

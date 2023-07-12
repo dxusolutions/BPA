@@ -18,26 +18,32 @@ namespace XafDevexpress.Module.BusinessObjects
     // Specify more UI options using a declarative approach (https://documentation.devexpress.com/#eXpressAppFramework/CustomDocument112701).
     // You do not need to implement the INotifyPropertyChanged interface - EF Core implements it automatically.
     // (see https://learn.microsoft.com/en-us/ef/core/change-tracking/change-detection#change-tracking-proxies for details).
-    public class FlowDiagramDetail : BaseObject
+    public class FlowField : BaseObject
     {
-        public FlowDiagramDetail()
+        public FlowField()
         {
             // In the constructor, initialize collection properties, e.g.: 
             // this.AssociatedEntities = new ObservableCollection<AssociatedEntityObject>();
         }
 
         [Browsable(false)]
-        public virtual FlowDiagram FlowDiagram { get; set; }
-
         public virtual FlowStep FlowStep { get; set; }
-                
+
         public virtual string Name { get; set; }
 
-        [Browsable(false)]
-        public virtual double X { get; set; }
+        [DataSourceProperty("FlowStep.GetAllType")]
+        [NotMapped]
+        public virtual FieldNonPersistent TypeDropDown { get; set; }
 
         [Browsable(false)]
-        public virtual double Y { get; set; }
+        public virtual string Type { get; set; }
+        
+        [Browsable(false)]
+        public virtual string TypeFullName { get; set; }
+
+        public virtual bool Input { get; set; }
+
+        public virtual bool Output { get; set; }
 
         // Alternatively, specify more UI options:
         //[XafDisplayName("My display name"), ToolTip("My hint message")]
@@ -53,5 +59,19 @@ namespace XafDevexpress.Module.BusinessObjects
         //    // Trigger custom business logic for the current record in the UI (https://documentation.devexpress.com/eXpressAppFramework/CustomDocument112619.aspx).
         //    this.PersistentProperty = "Paid";
         //}
+
+        public override void OnLoaded()
+        {
+            TypeDropDown = FlowStep.GetAllType.FirstOrDefault(x => x.TypeString == TypeFullName);
+
+            base.OnLoaded();
+        }
+
+        public override void OnSaving()
+        {
+            Type = TypeDropDown.Name;
+            TypeFullName = TypeDropDown.TypeString;
+            base.OnSaving();
+        }
     }
 }

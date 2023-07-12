@@ -1,6 +1,6 @@
-﻿namespace XafDevexpress.Module.Controllers
+﻿namespace XafDevexpress.Blazor.Server.Controllers
 {
-    partial class GoToNexFlowController
+    partial class GetAllCurrentFlowController
     {
         /// <summary>
         /// Required designer variable.

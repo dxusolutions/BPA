@@ -20,8 +20,6 @@ namespace XafDevexpress.Module.BusinessObjects
     // (see https://learn.microsoft.com/en-us/ef/core/change-tracking/change-detection#change-tracking-proxies for details).
     public class FlowDiagram : BaseObject
     {
-        public static IList<FlowNonPersistent> _getAllFlow;
-
         public FlowDiagram()
         {
             // In the constructor, initialize collection properties, e.g.: 
@@ -29,6 +27,9 @@ namespace XafDevexpress.Module.BusinessObjects
         }
 
         public virtual string Name { get; set; }
+
+        [Browsable(false)]
+        public virtual string DiagramSerialize { get; set; }
 
         // Alternatively, specify more UI options:
         //[XafDisplayName("My display name"), ToolTip("My hint message")]
@@ -40,6 +41,9 @@ namespace XafDevexpress.Module.BusinessObjects
         [DevExpress.ExpressApp.DC.Aggregated]
         public virtual IList<FlowDiagramDetail> FlowDiagramDetails { get; set; } = new ObservableCollection<FlowDiagramDetail>();
 
+        [DevExpress.ExpressApp.DC.Aggregated]
+        public virtual IList<FlowDiagramLink> FlowDiagramLinks { get; set; } = new ObservableCollection<FlowDiagramLink>();
+
         [NotMapped]
         [VisibleInListView(false)]
         [Editable(false)]
@@ -48,40 +52,21 @@ namespace XafDevexpress.Module.BusinessObjects
         [VisibleInListView(false)]
         public virtual FlowDiagram NextFlowDiagram { get; set; }
 
-        [Browsable(false)]
-        public IList<FlowNonPersistent> GetAllFlow
-        {
-            get
-            {
-                if (_getAllFlow.IsNullOrEmpty())
-                {
-                    _getAllFlow = new ObservableCollection<FlowNonPersistent>();
-                    foreach (var item in Assembly.GetExecutingAssembly().GetTypes()
-                                                            .Where(t => String.Equals(t.Namespace,
-                                                                                    "XafDevexpress.Module.BusinessObjects.Flow",
-                                                                                    StringComparison.Ordinal))
-                                                            .Select(x => x.Name))
-                    {
-                        _getAllFlow.Add(new FlowNonPersistent { Name = item });
-                    }
-                }
-                return _getAllFlow;
-            }
-        }
+        public virtual FlowStatus Status { get; set; } = FlowStatus.Inprocess;
 
         public void GetAllCurrentFlow()
         {
-            if (BaseFlows.Count == 0)
-            {
-                string empty = Guid.Empty.ToString();
+            //if (BaseFlows.Count == 0)
+            //{
+            //    string empty = Guid.Empty.ToString();
 
-                var r = this.ObjectSpace.GetObjects<BaseFlow>(CriteriaOperator.FromLambda<BaseFlow>(x => x.NextFlow.ToString() == empty))
-                                        .Where(x => x.FlowDiagramDetail.FlowDiagram.ID == this.ID);
-                if (r.Count() > 0)
-                {
-                    BaseFlows = new ObservableCollection<BaseFlow>(r);
-                }
-            }
+            //    var r = this.ObjectSpace.GetObjects<BaseFlow>(CriteriaOperator.FromLambda<BaseFlow>(x => x.NextFlow.ToString() == empty))
+            //                            .Where(x => x.FlowDiagramDetail.FlowDiagram.ID == this.ID);
+            //    if (r.Count() > 0)
+            //    {
+            //        BaseFlows = new ObservableCollection<BaseFlow>(r);
+            //    }
+            //}
         }
     }
 }

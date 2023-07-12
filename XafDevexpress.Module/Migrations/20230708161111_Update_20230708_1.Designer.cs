@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using XafDevexpress.Module.BusinessObjects;
 
@@ -11,9 +12,11 @@ using XafDevexpress.Module.BusinessObjects;
 namespace XafDevexpress.Module.Migrations
 {
     [DbContext(typeof(XafDevexpressEFCoreDbContext))]
-    partial class XafDevexpressEFCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230708161111_Update_20230708_1")]
+    partial class Update_20230708_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -519,9 +522,6 @@ namespace XafDevexpress.Module.Migrations
                     b.Property<Guid?>("NextFlowDiagramID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
                     b.HasIndex("NextFlowDiagramID");
@@ -544,11 +544,8 @@ namespace XafDevexpress.Module.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("X")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Y")
-                        .HasColumnType("float");
+                    b.Property<int>("Sort")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -557,41 +554,6 @@ namespace XafDevexpress.Module.Migrations
                     b.HasIndex("FlowStepID");
 
                     b.ToTable("FlowDiagramDetail");
-                });
-
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagramLink", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FlowDiagramID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SourceID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SourcePortAlignment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("TargetID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TargetPortAlignment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("FlowDiagramID");
-
-                    b.HasIndex("SourceID");
-
-                    b.HasIndex("TargetID");
-
-                    b.ToTable("FlowDiagramLink");
                 });
 
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowField", b =>
@@ -770,27 +732,6 @@ namespace XafDevexpress.Module.Migrations
                     b.Navigation("FlowStep");
                 });
 
-            modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagramLink", b =>
-                {
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagram", "FlowDiagram")
-                        .WithMany("FlowDiagramLinks")
-                        .HasForeignKey("FlowDiagramID");
-
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", "Source")
-                        .WithMany()
-                        .HasForeignKey("SourceID");
-
-                    b.HasOne("XafDevexpress.Module.BusinessObjects.FlowDiagramDetail", "Target")
-                        .WithMany()
-                        .HasForeignKey("TargetID");
-
-                    b.Navigation("FlowDiagram");
-
-                    b.Navigation("Source");
-
-                    b.Navigation("Target");
-                });
-
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowField", b =>
                 {
                     b.HasOne("XafDevexpress.Module.BusinessObjects.FlowStep", "FlowStep")
@@ -834,8 +775,6 @@ namespace XafDevexpress.Module.Migrations
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowDiagram", b =>
                 {
                     b.Navigation("FlowDiagramDetails");
-
-                    b.Navigation("FlowDiagramLinks");
                 });
 
             modelBuilder.Entity("XafDevexpress.Module.BusinessObjects.FlowStep", b =>

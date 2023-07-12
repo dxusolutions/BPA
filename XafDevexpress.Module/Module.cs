@@ -11,6 +11,11 @@ using DevExpress.ExpressApp.Model.DomainLogics;
 using DevExpress.ExpressApp.Model.NodeGenerators;
 using DevExpress.Persistent.BaseImpl.EF.Kpi;
 using DevExpress.ExpressApp.ReportsV2;
+using XafDevexpress.Module.BusinessObjects;
+using System.Security.AccessControl;
+using System.ComponentModel.DataAnnotations.Schema;
+using DevExpress.ExpressApp.ConditionalAppearance;
+using DevExpress.XtraCharts.Native;
 
 namespace XafDevexpress.Module;
 
@@ -50,15 +55,21 @@ public sealed class XafDevexpressModule : ModuleBase {
 		AdditionalExportedTypes.Add(typeof(KpiInstance));
 		AdditionalExportedTypes.Add(typeof(KpiScorecard));
     }
-    public override IEnumerable<ModuleUpdater> GetModuleUpdaters(IObjectSpace objectSpace, Version versionFromDB) {
+
+	public override IEnumerable<ModuleUpdater> GetModuleUpdaters(IObjectSpace objectSpace, Version versionFromDB) {
         ModuleUpdater updater = new DatabaseUpdate.Updater(objectSpace, versionFromDB);
         return new ModuleUpdater[] { updater };
     }
     public override void Setup(XafApplication application) {
         base.Setup(application);
-        // Manage various aspects of the application UI and behavior at the module level.
-    }
+		// Manage various aspects of the application UI and behavior at the module level.
+	}
     public override void Setup(ApplicationModulesManager moduleManager) {
         base.Setup(moduleManager);
 	}
+
+    public override void CustomizeTypesInfo(ITypesInfo typesInfo)
+    {
+        base.CustomizeTypesInfo(typesInfo);
+    }
 }

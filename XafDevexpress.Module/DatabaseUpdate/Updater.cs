@@ -4,6 +4,9 @@ using DevExpress.Persistent.Base;
 using DevExpress.ExpressApp.Updating;
 using DevExpress.ExpressApp.EF;
 using DevExpress.Persistent.BaseImpl.EF;
+using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
+using DevExpress.ExpressApp.Security;
+using DevExpress.ExpressApp.SystemModule;
 
 namespace XafDevexpress.Module.DatabaseUpdate;
 
@@ -14,15 +17,24 @@ public class Updater : ModuleUpdater {
     }
     public override void UpdateDatabaseAfterUpdateSchema() {
         base.UpdateDatabaseAfterUpdateSchema();
-        //string name = "MyName";
-        //EntityObject1 theObject = ObjectSpace.FirstOrDefault<EntityObject1>(u => u.Name == name);
-        //if(theObject == null) {
-        //    theObject = ObjectSpace.CreateObject<EntityObject1>();
-        //    theObject.Name = name;
-        //}
 
-		//ObjectSpace.CommitChanges(); //Uncomment this line to persist created object(s).
-    }
+		//PermissionPolicyRole adminRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == SecurityStrategy.AdministratorRoleName);
+		//if (adminRole == null)
+		//{
+		//	adminRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
+		//	adminRole.Name = SecurityStrategy.AdministratorRoleName;
+		//	adminRole.IsAdministrative = true;
+		//}
+		//PermissionPolicyUser adminUser = ObjectSpace.FirstOrDefault<PermissionPolicyUser>(user => user.UserName == "Admin");
+		//if (adminUser == null)
+		//{
+		//	adminUser = ObjectSpace.CreateObject<PermissionPolicyUser>();
+		//	adminUser.UserName = "Admin";
+		//	adminUser.SetPassword("123456");
+		//	adminUser.Roles.Add(adminRole);
+		//}
+		//ObjectSpace.CommitChanges();
+	}
     public override void UpdateDatabaseBeforeUpdateSchema() {
         base.UpdateDatabaseBeforeUpdateSchema();
     }

@@ -1,0 +1,36 @@
+﻿@using XafDevexpress.Blazor.Server.Model;
+@using global::Blazor.Diagrams.Core;
+@using global::Blazor.Diagrams.Core.Geometry;
+@using global::Blazor.Diagrams.Core.Models;
+@using _blazor = global::Blazor.Diagrams;
+
+<h2>Diagram flow</h2>
+<br />
+<DxButton Id="btnNew" Text="New step" Click="@btnNewClick" />
+<div style="width:auto; height: 80vh; border:solid; border-width: thin">
+    <CascadingValue Value="Diagram">
+        <Blazor.Diagrams.Components.DiagramCanvas></Blazor.Diagrams.Components.DiagramCanvas>
+    </CascadingValue>
+</div>
+
+
+@code {
+
+	[Parameter]
+	public FlowDiagramModel ComponentModel { get; set; }
+
+	public static RenderFragment Create(FlowDiagramModel componentModel) =>
+		@<FlowDiagramComponent ComponentModel=@componentModel />;
+
+    public Diagram Diagram { get => ComponentModel.Diagram; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    void btnNewClick(MouseEventArgs args)
+    {
+        ComponentModel.NewStep();
+    }
+}

@@ -1,11 +1,10 @@
 ﻿using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
-using Microsoft.EntityFrameworkCore;
-using System.Security.AccessControl;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using XafDevexpress.Module.BusinessObjects;
 
-namespace XafDevexpress.Module.Controllers
+namespace XafDevexpress.Blazor.Server.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppViewControllertopic.aspx.
     public partial class GetAllCurrentFlowController : ViewController
@@ -38,15 +37,21 @@ namespace XafDevexpress.Module.Controllers
             }
             else if (e.SelectedObjects[0] is FlowDiagram flowDiagram)
             {
-                var first = flowDiagram.FlowDiagramDetails.OrderBy(x => x.Sort).FirstOrDefault();
-                var nextFlow = Type.GetType($"XafDevexpress.Module.BusinessObjects.Flow.{first.Name}");
-                IObjectSpace objectSpace = Application.CreateObjectSpace(nextFlow);
-                BaseFlow newObj = objectSpace.CreateObject(nextFlow) as BaseFlow;
-                newObj.FlowDiagramDetail = first;
+                foreach (var detail in flowDiagram.FlowDiagramDetails)
+                {
+                    if (flowDiagram.FlowDiagramLinks.Any(x => x.Target.ID == detail.ID) == false)
+                    {
+                        IObjectSpace objectSpace = Application.CreateObjectSpace(typeof(BaseFlow));
+                        BaseFlow newObj = objectSpace.CreateObject(typeof(BaseFlow)) as BaseFlow;
+                        newObj.FlowDiagramDetail = detail;
+                        newObj.Name = detail.Name;
 
-                e.ShowViewParameters.CreatedView = Application.CreateDetailView(objectSpace, newObj);
+                        e.ShowViewParameters.CreatedView = Application.CreateDetailView(objectSpace, newObj);
+                        break;
+                    }
+                }
             }
-        }
+		}
 
         protected override void OnViewControlsCreated()
         {

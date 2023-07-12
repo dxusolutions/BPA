@@ -9,6 +9,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Controllers\FlowDiagram\**" />
+    <EmbeddedResource Remove="Controllers\FlowDiagram\**" />
+    <None Remove="Controllers\FlowDiagram\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controllers\Flow\GoToNexFlowController.cs" />
+    <Compile Remove="Controllers\Flow\GoToNexFlowController.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Model.DesignedDiffs.xafml" />
   </ItemGroup>
   <ItemGroup>

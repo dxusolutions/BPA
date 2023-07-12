@@ -1,0 +1,86 @@
+﻿@using XafDevexpress.Blazor.Server.Model;
+@using XafDevexpress.Module.BusinessObjects;
+<h3>Flow Detail</h3>
+@if (ComponentModel.GetFields.Count > 0)
+{
+	@foreach (var item in ComponentModel.GetFields)
+	{
+		@item.Name @switch (@item.TypeFullName)
+		{
+			case "System.Boolean":
+				@if (bool.TryParse(@item.Value, out bool c3))
+				{
+					<DxCheckBox Id=@item.Name Checked=c3 @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				}
+				else
+				{
+					<DxCheckBox Id=@item.Name Checked=false @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				}				
+				break;
+
+			case "System.String":
+				<DxTextBox Id=@item.Name Text=@item.Value @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				break;
+			case "System.Int32":
+			case "System.Int64":
+			case "System.Int":
+				@if (double.TryParse(@item.Value, out double c2))
+				{
+					<DxSpinEdit Id=@item.Name Value=@c2 @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				}
+				else
+				{
+					<DxSpinEdit Id=@item.Name Value="0" @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				}
+				break;
+			case "System.Double":
+				@if (double.TryParse(@item.Value, out double c1))
+				{
+					<DxSpinEdit Id=@item.Name Value=c1 @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				}
+				else
+				{
+					<DxSpinEdit Id=@item.Name Value="0.0" @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				}
+				break;
+			case "System.DateTime":
+				@if (DateTime.TryParse(@item.Value, out DateTime c))
+				{
+					<DxDateEdit Id=@item.Name Date=@c @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				}
+				else
+				{
+					<DxDateEdit Id=@item.Name Date=DateTime.Now @onchange="@((ev) => onChange(ev, @item.Name, @item.TypeFullName, @item.Type))" />
+				}
+				break;
+		}
+		<br/>
+	}
+}
+
+
+@code {
+	[Parameter]
+	public FlowProcessModel ComponentModel { get; set; }
+
+	public static RenderFragment Create(FlowProcessModel componentModel) =>
+		@<FlowProcessComponent ComponentModel=@componentModel />;
+
+	protected override void OnInitialized()
+	{
+	}
+
+	private void onChange(ChangeEventArgs e, string name, string typeFullName, string type)
+	{
+		var item = ComponentModel.GetFields.FirstOrDefault(x => x.Name == name && x.TypeFullName == typeFullName && x.Type == type);
+		if (item == null)
+		{
+			item = new BaseFlowField();
+			item.Name = name;
+			item.TypeFullName = typeFullName;
+			item.Type = type;
+			ComponentModel.GetFields.Add(item);
+		}
+		item.Value = e.Value.ToString();
+	}
+}

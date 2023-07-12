@@ -1,7 +1,9 @@
 ﻿using DevExpress.ExpressApp.ApplicationBuilder;
 using DevExpress.ExpressApp.Blazor.ApplicationBuilder;
 using DevExpress.ExpressApp.Blazor.Services;
+using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.EntityFrameworkCore;
@@ -30,27 +32,31 @@ public class Startup {
             builder.Modules
                 .AddAuditTrailEFCore()
                 .AddConditionalAppearance()
-                .AddDashboards(options => {
+                .AddDashboards(options =>
+                {
                     options.DashboardDataType = typeof(DevExpress.Persistent.BaseImpl.EF.DashboardData);
                 })
                 .AddFileAttachments()
                 .AddOffice()
-                .AddReports(options => {
+                .AddReports(options =>
+                {
                     options.EnableInplaceReports = true;
                     options.ReportDataType = typeof(DevExpress.Persistent.BaseImpl.EF.ReportDataV2);
                     options.ReportStoreMode = DevExpress.ExpressApp.ReportsV2.ReportStoreModes.XML;
                     options.ShowAdditionalNavigation = true;
                 })
                 .AddScheduler()
-                .AddValidation(options => {
+                .AddValidation(options =>
+                {
                     options.IgnoreWarningAndInformationRules = true;
                 })
-                .AddViewVariants(options => {
+                .AddViewVariants(options =>
+                {
                     options.ShowAdditionalNavigation = true;
                 })
                 .Add<XafDevexpress.Module.XafDevexpressModule>()
-            	.Add<XafDevexpressBlazorModule>();
-            builder.ObjectSpaceProviders
+                .Add<XafDevexpressBlazorModule>();
+			builder.ObjectSpaceProviders
                 .AddEFCore(options => options.PreFetchReferenceProperties())
                     .WithAuditedDbContext(contexts => {
                         contexts.Configure<XafDevexpress.Module.BusinessObjects.XafDevexpressEFCoreDbContext, XafDevexpress.Module.BusinessObjects.XafDevexpressAuditingDbContext>(
@@ -95,8 +101,8 @@ public class Startup {
                             });
                     })
                 .AddNonPersistent();
-        });
-    }
+		});
+	}
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
@@ -119,5 +125,5 @@ public class Startup {
             endpoints.MapFallbackToPage("/_Host");
             endpoints.MapControllers();
         });
-    }
+	}
 }
