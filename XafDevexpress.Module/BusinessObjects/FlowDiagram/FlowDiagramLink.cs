@@ -29,12 +29,16 @@ namespace XafDevexpress.Module.BusinessObjects
         [Browsable(false)]
         public virtual FlowDiagram FlowDiagram { get; set; }
 
+        [Browsable(false)]
         public virtual FlowDiagramDetail Source { get; set; }
 
+        [Browsable(false)]
         public virtual string SourcePortAlignment { get; set; }
 
+        [Browsable(false)]
         public virtual FlowDiagramDetail Target { get; set; }
 
+        [Browsable(false)]
         public virtual string TargetPortAlignment { get; set; }
 
         public virtual FlowStatus Status { get; set; } = FlowStatus.Inprocess;

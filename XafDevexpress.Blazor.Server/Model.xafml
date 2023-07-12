@@ -2,6 +2,14 @@
 <Application>
   <NavigationItems NavigationStyle="Accordion">
     <Items>
+      <Item Id="Default">
+        <Items>
+          <Item Id="BaseFlow_ListView" ImageName="State_Task_Deferred" />
+          <Item Id="Employee_ListView" ImageName="BO_Employee" />
+          <Item Id="FlowDiagram_ListView" ImageName="ChartType_StepLine" />
+          <Item Id="FlowStep_ListView" ImageName="Action_Report_ShowDesigner" />
+        </Items>
+      </Item>
       <Item Id="KPI" Removed="True" />
       <Item Id="Reports">
         <Items>

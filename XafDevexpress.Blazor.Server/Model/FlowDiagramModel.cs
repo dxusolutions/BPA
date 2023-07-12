@@ -8,6 +8,7 @@ using Diagrams = Blazor.Diagrams;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Security;
 using System.Reflection;
+using Blazor.Diagrams.Core.Models.Base;
 
 namespace XafDevexpress.Blazor.Server.Model
 {
@@ -16,13 +17,16 @@ namespace XafDevexpress.Blazor.Server.Model
         public delegate void RemoveLink(Diagrams.Core.Models.Base.BaseLinkModel link);
         public event RemoveLink RemoveLinkEvent;
 
+        public delegate void OpenLink(string Id, string status);
+        public event OpenLink OpenLinkEvent;
+
         public delegate void OpenFlowDetail(string Id);
         public event OpenFlowDetail OpenFlowDetailEvent;
 
         public delegate void DeleteFlowDetail(string Id);
         public event DeleteFlowDetail DeleteFlowDetailEvent;
 
-        public Diagram Diagram
+		public Diagram Diagram
         {
             get => GetPropertyValue<Diagram>();
             set => SetPropertyValue(value);
@@ -74,7 +78,11 @@ namespace XafDevexpress.Blazor.Server.Model
         {
             if (arg1 is NodeModel nodeModel)
             {
-                OpenFlowDetailEvent.Invoke(arg1.Id);
+                OpenFlowDetailEvent.Invoke(nodeModel.Id);
+            }
+            else if (arg1 is BaseLinkModel link)
+            {
+                OpenLinkEvent.Invoke(link.Id, link.Labels.FirstOrDefault()?.Content);
             }
         }
 
@@ -89,21 +97,6 @@ namespace XafDevexpress.Blazor.Server.Model
             link.TargetMarker = LinkMarker.Arrow;
             link.Router = Routers.Normal;
             link.PathGenerator = PathGenerators.Smooth;
-            if (link.SourceNode.AllLinks.Count(x => x.SourceNode.Id == link.SourceNode.Id) == 2
-                || link.SourceNode.Links.Count(x => x.SourceNode.Id == link.SourceNode.Id) == 2)
-            {
-                link.Labels = new List<LinkLabelModel>()
-            {
-                new LinkLabelModel(link, "Reject")
-            };
-            }
-            else
-            {
-                link.Labels = new List<LinkLabelModel>()
-                {
-                    new LinkLabelModel(link, "Submit")
-                };
-            }
         }
 
         public NodeModel NewNode(string id, double x, double y)
@@ -113,6 +106,7 @@ namespace XafDevexpress.Blazor.Server.Model
             node.AddPort(PortAlignment.Top);
             node.AddPort(PortAlignment.Left);
             node.AddPort(PortAlignment.Right);
+
             return node;
         }
     }

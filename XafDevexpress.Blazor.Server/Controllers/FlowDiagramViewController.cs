@@ -5,6 +5,7 @@ using DevExpress.ExpressApp.Blazor.Components;
 using DevExpress.ExpressApp.Blazor.Components.Models;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.SystemModule;
+using DevExpress.Map.Native;
 using DevExpress.Persistent.Base;
 using DevExpress.XtraReports.Design.ParameterEditor;
 using Microsoft.EntityFrameworkCore;
@@ -93,7 +94,10 @@ namespace XafDevexpress.Blazor.Server.Controllers
                                                         && x.Y == detail.TargetNode.Position.Y);
 				}
                 item.TargetPortAlignment = detail.TargetPort.Alignment.ToString();
-                item.Status = detail.Labels.FirstOrDefault().Content.Contains("Reject") ? FlowStatus.Reject : FlowStatus.Submit; 
+                if (Enum.TryParse<FlowStatus>(detail.Labels.FirstOrDefault()?.Content, out FlowStatus status))
+                {
+                    item.Status = status;
+                }
                 item.FlowDiagram = flowDiagram;
             }
         }
@@ -106,16 +110,57 @@ namespace XafDevexpress.Blazor.Server.Controllers
                 flowDiagramModel.InitDiagram();
                 InitFlow(flowDiagram.ID);
                 //
+                flowDiagramModel.OpenFlowDetailEvent -= FlowDiagramModel_OpenFlowDetailEvent;
                 flowDiagramModel.OpenFlowDetailEvent += FlowDiagramModel_OpenFlowDetailEvent;
+                flowDiagramModel.DeleteFlowDetailEvent -= FlowDiagramModel_DeleteFlowDetailEvent;
                 flowDiagramModel.DeleteFlowDetailEvent += FlowDiagramModel_DeleteFlowDetailEvent;
+                flowDiagramModel.RemoveLinkEvent -= FlowDiagramModel_RemoveLinkEvent;
                 flowDiagramModel.RemoveLinkEvent += FlowDiagramModel_RemoveLinkEvent;
+                flowDiagramModel.OpenLinkEvent -= FlowDiagramModel_OpenLinkEvent;
+                flowDiagramModel.OpenLinkEvent += FlowDiagramModel_OpenLinkEvent;
             }
 		}
+
+        private void FlowDiagramModel_OpenLinkEvent(string Id, string content)
+        {
+            if (View.CurrentObject is FlowDiagram flowDiagram)
+            {
+                var objectSpace = Application.CreateObjectSpace(typeof(FlowDiagramLink));
+                var currentObject = objectSpace.CreateObject(typeof(FlowDiagramLink)) as FlowDiagramLink;
+                if (Enum.TryParse<FlowStatus>(content, out FlowStatus status))
+                {
+                    currentObject.Status = status;
+                }
+                var detailView = Application.CreateDetailView(objectSpace, currentObject, false);
+                detailView.ViewEditMode = ViewEditMode.Edit;
+                Application.ShowViewStrategy.ShowViewInPopupWindow(detailView, () =>
+                {
+                    objectSpace.Rollback();
+
+                    var link = flowDiagramModel.Diagram.Links.FirstOrDefault(x => x.Id == Id);
+                    if (link != null)
+                    {
+                        if (link.Labels.Count == 0)
+                        {
+                            link.Labels = new List<LinkLabelModel>()
+                            {
+                                new LinkLabelModel(link, currentObject.Status.ToString())
+                            };
+                        }
+                        else
+                        {
+                            link.Labels.FirstOrDefault().Content = currentObject.Status.ToString();
+                        }
+                    }
+                });
+            }
+        }
 
         private void FlowDiagramModel_RemoveLinkEvent(global::Blazor.Diagrams.Core.Models.Base.BaseLinkModel link)
         {
             var linkObj = this.ObjectSpace.GetObjectByKey<FlowDiagramLink>(new Guid(link.Id));
-            ObjectSpace.Delete(linkObj);
+            if (linkObj != null)
+                ObjectSpace.Delete(linkObj);
         }
 
         private void FlowDiagramModel_DeleteFlowDetailEvent(string Id)
@@ -123,7 +168,8 @@ namespace XafDevexpress.Blazor.Server.Controllers
             if (View.CurrentObject is FlowDiagram flowDiagram)
             {
                 var item = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == Id.ToString());
-                this.ObjectSpace.Delete(item);
+                if (item != null)
+                    this.ObjectSpace.Delete(item);
             }
         }
 
@@ -189,15 +235,14 @@ namespace XafDevexpress.Blazor.Server.Controllers
                 var target = flowDiagramModel.Diagram.Nodes.FirstOrDefault(x => x.Id == link.Target.ID.ToString());
                 if (source != null && target != null)
                 {
-                    flowDiagramModel.Diagram.Links.Add(new LinkModel(link.ID.ToString(), source.Ports.FirstOrDefault(x => x.Alignment.ToString() == link.SourcePortAlignment),
-                            target.Ports.FirstOrDefault(x => x.Alignment.ToString() == link.TargetPortAlignment)));
-
-                    var newLink = new FlowDiagramLink();
-                    newLink.Source = link.Source;
-                    newLink.SourcePortAlignment = link.SourcePortAlignment;
-                    newLink.Target = link.Target;
-                    newLink.TargetPortAlignment = link.TargetPortAlignment;
-                    newLink.Status = link.Status;
+                    var linkModel = new LinkModel(link.ID.ToString(),
+                            source.Ports.FirstOrDefault(x => x.Alignment.ToString() == link.SourcePortAlignment),
+                            target.Ports.FirstOrDefault(x => x.Alignment.ToString() == link.TargetPortAlignment));
+					linkModel.Labels = new List<LinkLabelModel>()
+			        {
+				        new LinkLabelModel(linkModel, link.Status.ToString())
+			        };
+					flowDiagramModel.Diagram.Links.Add(linkModel);
                 }
             }
         }
