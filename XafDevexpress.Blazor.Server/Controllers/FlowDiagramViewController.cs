@@ -59,11 +59,6 @@ namespace XafDevexpress.Blazor.Server.Controllers
             foreach (var detail in flowDiagramModel.Diagram.Nodes)
             {
                 var item = flowDiagram.FlowDiagramDetails.FirstOrDefault(x => x.ID.ToString() == detail.Id.ToString());
-                if (item.IsDeleted)
-                {
-                    ObjectSpace.Delete(item);
-                    continue;
-                }
 				item.X = detail.Position.X;
 				item.Y = detail.Position.Y;
 			}
@@ -177,6 +172,8 @@ namespace XafDevexpress.Blazor.Server.Controllers
         {
             if (this.View.CurrentObject is FlowDiagram flowDiagram)
             {
+                ObjectSpace.CommitChanges();
+
                 FlowDiagramDetail currentObject;
                 var objectSpace = Application.CreateObjectSpace(typeof(FlowDiagramDetail));
                 if (string.IsNullOrWhiteSpace(Id))
@@ -187,7 +184,6 @@ namespace XafDevexpress.Blazor.Server.Controllers
                     detailView.ViewEditMode = ViewEditMode.Edit;
                     Application.ShowViewStrategy.ShowViewInPopupWindow(detailView, () =>
                     {
-                        currentObject.IsNew = true;
                         flowDiagram.FlowDiagramDetails.Add(currentObject);
 
                         objectSpace.CommitChanges();

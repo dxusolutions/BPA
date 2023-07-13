@@ -39,14 +39,6 @@ namespace XafDevexpress.Module.BusinessObjects
         [Browsable(false)]
         public virtual double Y { get; set; }
 
-        [NotMapped]
-		[Browsable(false)]
-		public virtual bool IsDeleted { get; set; }
-
-        [NotMapped]
-		[Browsable(false)]
-		public virtual bool IsNew { get; set; }
-
         // Alternatively, specify more UI options:
         //[XafDisplayName("My display name"), ToolTip("My hint message")]
         //[ModelDefault("EditMask", "(000)-00"), VisibleInListView(false)]

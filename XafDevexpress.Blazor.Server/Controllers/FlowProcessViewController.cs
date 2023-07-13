@@ -2,7 +2,9 @@
 using DevExpress.ExpressApp.Actions;
 using DevExpress.ExpressApp.SystemModule;
 using DevExpress.Persistent.Base;
+using DevExpress.XtraRichEdit.Fields;
 using Microsoft.EntityFrameworkCore;
+using System.Security.AccessControl;
 using XafDevexpress.Blazor.Server.Editors;
 using XafDevexpress.Module.BusinessObjects;
 using static XafDevexpress.Blazor.Server.Editors.FlowProcessViewItemBlazor;
@@ -71,37 +73,38 @@ namespace XafDevexpress.Blazor.Server.Controllers
 			{
 				var componentModel = ((FlowProcessHolder)((FlowProcessViewItemBlazor)sender).Control).ComponentModel;
 				componentModel.ObjectSpace = this.ObjectSpace;
-				if (baseFlow != null && baseFlow.NextFlow != Guid.Empty)
+				if (baseFlow != null && (baseFlow.NextFlow != Guid.Empty || baseFlow.AllFields.Count > 0))
 				{
-					foreach(var item in baseFlow.AllFields)
+					foreach (var item in baseFlow.AllFields)
 					{
-						componentModel.GetFields.Add(new BaseFlowField()
-						{
-							Value = item.Value,
-							ID = item.ID,
-							BaseFlow = baseFlow,
-							Name = item.Name,
-							Type = item.Type,
-							TypeFullName = item.TypeFullName,
-						});
-					}					
-				}
-				else
+                        componentModel.GetFields.Add(new BaseFlowField()
+                        {
+                            Value = item.Value,
+                            ID = item.ID,
+                            BaseFlow = baseFlow,
+                            Name = item.Name,
+                            Type = item.Type,
+                            TypeFullName = item.TypeFullName,
+                        });
+                    }
+                }
+                else
 				{
                     var objectSpaceTemp = Application.CreateObjectSpace(typeof(FlowDiagramDetail));
                     var flowDiagramDetail = objectSpaceTemp.GetObjectByKey<FlowDiagramDetail>(baseFlow.FlowDiagramDetail.ID);
-					foreach (var item in flowDiagramDetail.FlowStep.AllFields)
-					{
-						componentModel.GetFields.Add(new BaseFlowField()
+                    foreach (var item in flowDiagramDetail.FlowStep.AllFields)
+                    {
+						var newField = new BaseFlowField()
 						{
 							BaseFlow = baseFlow,
 							Name = item.Name,
 							Type = item.Type,
 							TypeFullName = item.TypeFullName,
-						});
-					}
-				}
-			}
+						};
+						componentModel.GetFields.Add(newField);
+                    }
+                }
+            }
 		}
 
 		private async void SaveAction_Execute(object sender, SimpleActionExecuteEventArgs e)
@@ -153,17 +156,17 @@ namespace XafDevexpress.Blazor.Server.Controllers
 				newObj.FlowDiagramDetail = first;
 				newObj.Name = first.Name;
 
-				e.ShowViewParameters.CreatedView = Application.CreateDetailView(objectSpace, newObj);
+                e.ShowViewParameters.CreatedView = Application.CreateDetailView(objectSpace, newObj);
 			}
 		}
 
 		private void Action_Execute(object sender, SimpleActionExecuteEventArgs e)
 		{
 			if (this.View.CurrentObject is BaseFlow baseFlow)
-            {
-                var objectSpace = Application.CreateObjectSpace(typeof(BaseFlow));
-                var next = objectSpace.GetObjectByKey<FlowDiagramDetail>(nextFlowDetail);
-                BaseFlow newObj = objectSpace.CreateObject(typeof(BaseFlow)) as BaseFlow;
+			{
+				var objectSpace = Application.CreateObjectSpace(typeof(BaseFlow));
+				var next = objectSpace.GetObjectByKey<FlowDiagramDetail>(nextFlowDetail);
+				BaseFlow newObj = objectSpace.CreateObject(typeof(BaseFlow)) as BaseFlow;
 				newObj.PrevFlow = baseFlow.ID;
 				newObj.BeginFlow = baseFlow.BeginFlow;
 				newObj.Name = next.Name;
@@ -172,6 +175,36 @@ namespace XafDevexpress.Blazor.Server.Controllers
 				if (baseFlow != null && baseFlow.NextFlow != newObj.ID)
 				{
 					baseFlow.NextFlow = newObj.ID;
+				}
+
+				foreach (var item in baseFlow.AllFields)
+				{
+					if (newObj.AllFields.Any(x => x.TypeFullName == item.TypeFullName
+													&& x.Name == item.Name) == false)
+					{
+						var newField = objectSpace.CreateObject(typeof(BaseFlowField)) as BaseFlowField;
+						newField.TypeFullName = item.TypeFullName;
+						newField.Type = item.Type;
+						newField.Name = item.Name;
+						newField.Value = item.Value;
+
+						newObj.AllFields.Add(newField);
+					}
+				}
+
+				var flowDiagramDetail = objectSpace.GetObjectByKey<FlowDiagramDetail>(next.ID);
+				foreach (var item in flowDiagramDetail.FlowStep.AllFields)
+				{
+					if (newObj.AllFields.Any(x => x.TypeFullName == item.TypeFullName
+													&& x.Name == item.Name) == false)
+					{
+						var newField = objectSpace.CreateObject(typeof(BaseFlowField)) as BaseFlowField;
+						newField.TypeFullName = item.TypeFullName;
+						newField.Type = item.Type;
+						newField.Name = item.Name;
+
+						newObj.AllFields.Add(newField);
+					}
 				}
 
 				e.ShowViewParameters.CreatedView = Application.CreateDetailView(objectSpace, newObj);
@@ -224,7 +257,7 @@ namespace XafDevexpress.Blazor.Server.Controllers
 			// Unsubscribe from previously subscribed events and release other references and resources.
 			base.OnDeactivated();
 
-			View.FindItem("FlowProcessPage").ControlCreated += FlowProcessViewController_ControlCreated;
+			View.FindItem("FlowProcessPage").ControlCreated -= FlowProcessViewController_ControlCreated;
 
 			var processCurObj = Frame.GetController<ModificationsController>();
 			processCurObj.SaveAction.Active[""] = true;

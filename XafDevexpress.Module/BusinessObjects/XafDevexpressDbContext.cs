@@ -80,6 +80,11 @@ public class XafDevexpressEFCoreDbContext : DbContext
             .HasMany(r => r.FlowDiagramDetails)
             .WithOne(x => x.FlowDiagram)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BaseFlow>()
+            .HasMany(r => r.AllFields)
+            .WithOne(x => x.BaseFlow)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
 
