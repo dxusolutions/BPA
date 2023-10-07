@@ -13,8 +13,8 @@ namespace MauiApplication.Customize
     {
         public async void NavigateNext(NavigationManager manager)
         {
-            //manager.NavigateTo("fetchdata");
-            await App.Current.MainPage.Navigation.PushAsync(new FetchData());
+            manager.NavigateTo("fetchdata");
+            //await App.Current.MainPage.Navigation.PushAsync(new FetchData());
         }
     }
 }
